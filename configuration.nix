@@ -62,7 +62,7 @@
   services.cage = {
     enable = true;
     user = "kiosk";
-    extraArguments = [ "-s" "--xwayland" ];
+    extraArguments = [ "-s" "-d" ];
   };
 
   # Hide cursor

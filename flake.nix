@@ -45,6 +45,7 @@
           libgbm
           libGL
           libpulseaudio
+          libsoup_3
           libxkbcommon
           mesa
           nspr
@@ -53,6 +54,7 @@
           pipewire
           stdenv.cc.cc.lib
           wayland
+          webkitgtk_4_1
           xorg.libX11
           xorg.libXcomposite
           xorg.libXcursor
@@ -104,41 +106,44 @@
         modules = commonModules;
       };
 
-      packages.${system}.vm = (nixpkgs.lib.nixosSystem {
-        inherit system;
+      packages.${system} = {
+        vm = (nixpkgs.lib.nixosSystem {
+          inherit system;
 
-        modules = commonModules ++ [
-          "${nixpkgs}/nixos/modules/virtualisation/qemu-vm.nix"
-          ({ lib, ... }: {
-            boot.loader.systemd-boot.enable = lib.mkForce false;
-            boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
+          modules = commonModules ++ [
+            "${nixpkgs}/nixos/modules/virtualisation/qemu-vm.nix"
+            ({ lib, ... }: {
+              boot.loader.systemd-boot.enable = lib.mkForce false;
+              boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
 
-            virtualisation = {
-              memorySize = 4096;
-              cores = 2;
-              diskSize = 8192;
-              graphics = true;
-              qemu.options = [
-                "-device virtio-gpu-pci"
-                "-display gtk,gl=on"
-                "-device intel-hda"
-                "-device hda-duplex"
-              ];
-            };
-          })
-        ];
-      }).config.system.build.vm;
+              virtualisation = {
+                memorySize = 4096;
+                cores = 2;
+                diskSize = 8192;
+                graphics = true;
+                qemu.options = [
+                  "-device virtio-gpu-pci"
+                  "-display gtk,gl=on"
+                  "-device intel-hda"
+                  "-device hda-duplex"
+                ];
+              };
+            })
+          ];
+        }).config.system.build.vm;
 
-      packages.${system}.iso = (nixpkgs.lib.nixosSystem {
-        inherit system;
+        iso = (nixpkgs.lib.nixosSystem {
+          inherit system;
 
-        modules = commonModules ++ [
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-          ({ lib, ... }: {
-            boot.loader.systemd-boot.enable = lib.mkForce false;
-            boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
-          })
-        ];
-      }).config.system.build.isoImage;
+          modules = commonModules ++ [
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+            ({ lib, ... }: {
+              boot.loader.systemd-boot.enable = lib.mkForce false;
+              boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
+              networking.wireless.enable = lib.mkForce false;
+            })
+          ];
+        }).config.system.build.isoImage;
+      };
     };
 }
