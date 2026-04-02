@@ -18,7 +18,10 @@
         pname = "nightingale";
         version = "upstream";
 
-        src = ./nightingale/Nightingale_0.4.0_x86_64.tar.xz;
+        src = pkgs.fetchurl {
+          url = "https://github.com/rzru/nightingale/releases/download/v0.4.0/Nightingale_0.4.0_x86_64.tar.xz";
+          hash = "sha256-oS3tIWBsF6CShe1NivjAZ6ThQYNqeDZV3MFpA9mOSyw=";
+        };
 
         nativeBuildInputs = [
           pkgs.autoPatchelfHook
